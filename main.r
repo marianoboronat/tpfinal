@@ -1,8 +1,10 @@
 # oferta de casas y departamentos para rentar en airbnb en 10 ciudades europeas en dias de semana
 # (año 2021)
 
+library(readr)
 library(tidyverse)
 library(scales)
+library(modelr)
 
 archivos <- c(
   "amsterdam" = "data/amsterdam_weekdays.csv",
@@ -27,8 +29,8 @@ df |>
 
 # creamos la columna precio por noche, y lo redondeamos a 1 decimal
 df <- df %>%
-  mutate(precio_x_noche = realSum / 2)|>
-  view()
+  mutate(precio_x_noche = realSum / 2,
+         person_capacity = factor(person_capacity))
 
 # omitimos las variables innecesarias.
 df <- df |>
@@ -39,80 +41,23 @@ df <- df |>
          -multi,
          -attr_index,
          -rest_index,
-         )|>
-  view()
+         )
+
+# renombramos las variables
+df <- df %>%
+  rename(precio_dos_noches = realSum,
+         cuarto_compartido = room_shared,
+         capacidad_personas = person_capacity,
+         puntuacion_limpieza = cleanliness_rating ,
+         puntuacion = guest_satisfaction_overall,
+         dormitorios = bedrooms,
+         indice_restaurantes = rest_index_norm,
+         )
 
 
+view(df)
 
-# proporcion de la cantidad de datos por ciudad
-df |> 
-  group_by(ciudad) |> 
-  summarize(cantidad = n()) |> 
-  # ordenamos de mayor a menor
-  arrange(desc(cantidad)) |> 
-  mutate(proporcion = cantidad / sum(cantidad)*100) |> 
-  
-  mutate(ciudad = reorder(ciudad, proporcion)) |>
-  ggplot(aes(x = "", y = proporcion, fill = ciudad)) +
-  geom_col(color = "white") +
-  geom_text(aes(label = paste0(round(proporcion, 1), "%")),
-            position = position_stack(vjust = 0.5), size = 3.5) +
-  labs(title = "proporción de datos por ciudad",
-       x = NULL, y = "proporción (%)", fill = "ciudad")+
-  theme_light()
+write_csv(df, "airbnb_limpio.csv")
 
-
-
-# # vemos la distribucion de precios por cantidad de personas permitidas
-df |>
-  filter(precio_x_noche<=1000) |>
-  ggplot()+
-  aes(x = factor(person_capacity), y = precio_x_noche, alpha = 0.1)+
-  geom_violin()+
-  labs(
-    title = "distribución de precios por cantidad de personas permitidas",
-    x = "capacidad de personas (cantidad)",
-    y = "precio"
-  )
-
-# # vemos la distribucion de precios por ciudad
-df |>
-  # filter(precio_x_noche<=750) |>
-  ggplot()+
-  # CONVERTIMOS A VARIABLE CATEGORICA "CIUDAD" 
-  aes(x = factor(ciudad), y = precio_x_noche, alpha = 0.1)+
-  # geom_violin()+
-  geom_boxplot()+
-  labs(
-    title = "distribución de precios por ciudad.",
-    x = "ciudad",
-    y = "precio"
-  )
-
-quantile(df%precio, )
-
-# GRAFICAMOS LOS PRECIOS CON RESPECTO A LA DISTANCIA DEL CENTRO DE LA CIUDAD
-df |> 
-  
-  filter(precio_x_noche<=750) |>
-  ggplot()+
-  aes(x = dist, y= precio_x_noche, colour = ciudad )+
-  geom_point()+
-  facet_wrap(~ciudad, scales = "free") +
-  labs(title = "relacion precio con respecto a la distancia
-       al centro de la ciudad.",
-       x = "precio por noche (euros)", y = "distancia al centro de la ciudad (en km)")
-
-
-# GRAFICAMOS LAS COORDENADAS GEOGRAFICAS
-df |> 
-  ggplot()+
-  aes(x = lng, y= lat, colour = ciudad )+
-  geom_point(size = 0.1)+
-  facet_wrap(~ciudad, scales = "free") +
-  labs(title = "Ubicación de los alojamientos por ciudad",
-       x = "Longitud", y = "Latitud")
-
-# mod0 = lm(df, precio~)
-# summary(mod0)
+df <- read_csv("airbnb_limpio.csv")
 
