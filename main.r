@@ -1,3 +1,6 @@
+# oferta de casas y departamentos para rentar en airbnb en 10 ciudades europeas en dias de semana
+# (año 2021)
+
 library(tidyverse)
 library(scales)
 
@@ -18,8 +21,8 @@ archivos <- c(
 df <- map_df(archivos, read_csv, .id = "ciudad")
 
 # visualizamos el dataset
-# df |>
-#   glimpse()
+df |>
+  glimpse()
 
 
 # creamos la columna precio por noche, y lo redondeamos a 1 decimal
@@ -40,8 +43,6 @@ df <- df |>
   view()
 
 
-# oferta de casas y departamentos para rentar en airbnb en 10 ciudades europeas en dias de semana
-# (año 2021)
 
 # proporcion de la cantidad de datos por ciudad
 df |> 
@@ -49,14 +50,17 @@ df |>
   summarize(cantidad = n()) |> 
   # ordenamos de mayor a menor
   arrange(desc(cantidad)) |> 
-  mutate(proporcion = cantidad / sum(cantidad)) |> 
-  ggplot() +
-  aes(x = ciudad, y = proporcion, )+
-  geom_col(position = "fill") +
-  # geom_text(aes(label = percent(proporcion, accuracy = 0.1)),
-  #             vjust = -0.5, size = 3.5) +
-  scale_y_continuous(labels = percent_format(),
-                       expand = expansion(mult = c(0, 0.1)))
+  mutate(proporcion = cantidad / sum(cantidad)*100) |> 
+  
+  mutate(ciudad = reorder(ciudad, proporcion)) |>
+  ggplot(aes(x = "", y = proporcion, fill = ciudad)) +
+  geom_col(color = "white") +
+  geom_text(aes(label = paste0(round(proporcion, 1), "%")),
+            position = position_stack(vjust = 0.5), size = 3.5) +
+  labs(title = "proporción de datos por ciudad",
+       x = NULL, y = "proporción (%)", fill = "ciudad")+
+  theme_light()
+
 
 
 # # vemos la distribucion de precios por cantidad de personas permitidas
@@ -73,7 +77,7 @@ df |>
 
 # # vemos la distribucion de precios por ciudad
 df |>
-  filter(precio_x_noche<=750) |>
+  # filter(precio_x_noche<=750) |>
   ggplot()+
   # CONVERTIMOS A VARIABLE CATEGORICA "CIUDAD" 
   aes(x = factor(ciudad), y = precio_x_noche, alpha = 0.1)+
@@ -85,15 +89,30 @@ df |>
     y = "precio"
   )
 
+quantile(df%precio, )
+
+# GRAFICAMOS LOS PRECIOS CON RESPECTO A LA DISTANCIA DEL CENTRO DE LA CIUDAD
+df |> 
+  
+  filter(precio_x_noche<=750) |>
+  ggplot()+
+  aes(x = dist, y= precio_x_noche, colour = ciudad )+
+  geom_point()+
+  facet_wrap(~ciudad, scales = "free") +
+  labs(title = "relacion precio con respecto a la distancia
+       al centro de la ciudad.",
+       x = "precio por noche (euros)", y = "distancia al centro de la ciudad (en km)")
+
 
 # GRAFICAMOS LAS COORDENADAS GEOGRAFICAS
 df |> 
   ggplot()+
   aes(x = lng, y= lat, colour = ciudad )+
-  geom_point()+
+  geom_point(size = 0.1)+
   facet_wrap(~ciudad, scales = "free") +
   labs(title = "Ubicación de los alojamientos por ciudad",
        x = "Longitud", y = "Latitud")
 
 # mod0 = lm(df, precio~)
 # summary(mod0)
+
