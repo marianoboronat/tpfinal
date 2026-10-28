@@ -52,6 +52,7 @@ df <- df %>%
          puntuacion = guest_satisfaction_overall,
          dormitorios = bedrooms,
          indice_restaurantes = rest_index_norm,
+         indice_atraccion = attr_index_norm,
          )
 
 

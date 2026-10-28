@@ -1,4 +1,4 @@
-ciudad,...1,precio_dos_noches,cuarto_compartido,capacidad_personas,puntuacion_limpieza,puntuacion,dormitorios,dist,metro_dist,attr_index_norm,indice_restaurantes,lng,lat,precio_x_noche
+ciudad,...1,precio_dos_noches,cuarto_compartido,capacidad_personas,puntuacion_limpieza,puntuacion,dormitorios,dist,metro_dist,indice_atraccion,indice_restaurantes,lng,lat,precio_x_noche
 amsterdam,0,194.03369812293488,FALSE,2,10,93,1,5.022963798088291,2.539380002594493,4.166707868490748,6.846472824200016,4.90569,52.41772,97.01684906146744
 amsterdam,1,344.2457760176224,FALSE,4,8,85,1,0.4883892888289836,0.23940392283498632,33.421208615275404,58.34292774344904,4.90005,52.37432,172.1228880088112
 amsterdam,2,264.1014224451058,FALSE,2,9,87,1,5.748311915159562,3.651621288793656,3.9859076998790086,6.646700254501156,4.9751199999999995,52.36103,132.0507112225529

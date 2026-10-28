@@ -3,6 +3,9 @@ library(tidyverse)
 library(scales)
 library(modelr)
 
+# abrimos el dataset
+df <- read_csv("airbnb_limpio.csv")
+
 # proporcion de la cantidad de datos por ciudad
 df |> 
   group_by(ciudad) |> 
