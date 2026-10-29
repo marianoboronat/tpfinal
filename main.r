@@ -19,18 +19,17 @@ archivos <- c(
   "viena"     = "data/vienna_weekdays.csv"
 )
 
-# 2. Leemos y concatenamos, indicando con '.id' que cree una columna llamada "ciudad"
+# leemos y concatenamos indicando con '.id' que cree una columna llamada "ciudad"
 df <- map_df(archivos, read_csv, .id = "ciudad")
 
-# visualizamos el dataset
-df |>
-  glimpse()
 
 
 # creamos la columna precio por noche, y lo redondeamos a 1 decimal
 df <- df %>%
-  mutate(precio_x_noche = realSum / 2,
-         person_capacity = factor(person_capacity))
+  mutate(precio = realSum / 2,
+         person_capacity = factor(person_capacity),
+         cleanliness_rating = factor(cleanliness_rating)
+         )
 
 # omitimos las variables innecesarias.
 df <- df |>
@@ -55,10 +54,13 @@ df <- df %>%
          indice_atraccion = attr_index_norm,
          )
 
-
+# visualizamos
 view(df)
+unique(df$precio)
+
+
+df |> 
+  glimpse()
 
 write_csv(df, "airbnb_limpio.csv")
-
-df <- read_csv("airbnb_limpio.csv")
 
