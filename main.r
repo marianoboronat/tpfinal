@@ -54,13 +54,15 @@ df <- df %>%
          indice_atraccion = attr_index_norm,
          )
 
-# visualizamos
-view(df)
 unique(df$precio)
 
 
 df |> 
-  glimpse()
+  glimpse() |> 
+  # visualizamos
+  view()
 
 write_csv(df, "airbnb_limpio.csv")
+
+summary(df$precio)
 

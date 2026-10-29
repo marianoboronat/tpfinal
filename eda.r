@@ -11,7 +11,7 @@ df <- read_csv(file)
 
 # filtramos por los precios menores de 
 df <- df |> 
-  filter(precio_x_noche <= 750) 
+  filter(precio <= 750) 
   
 glimpse(df)
 
@@ -42,15 +42,16 @@ df |>
        x = NULL, y = "proporción (%)", fill = "ciudad")
 
 
-# precio
+# densidad de precios por 50 bins
 df |> 
-  filter(precio_x_noche <= 600) |> 
-  ggplot(aes(x = precio_x_noche,) )  + 
+  filter(precio <= 600) |> 
+  ggplot(aes(x = precio,) )  + 
   geom_histogram(binwidth =  50, ) +
   # geom_density( color = ciudad) + 
   # facet_wrap(~ ciudad, scales = "free_y") + 
   labs(
     title = "Densidad de alojamientos por precio",
+    aes(label = after_stat(count)),
     subtitle = "Comparativa por ciudad",
     x = "Precio",
     y = "Densidad",
@@ -63,7 +64,7 @@ df |>
 df |>
   # filter(precio_x_noche<=1000) |>
   ggplot()+
-  aes(x = factor(capacidad_personas), y = precio_x_noche, alpha = 0.1)+
+  aes(x = factor(capacidad_personas), y = precio, alpha = 0.1)+
   geom_violin()+
   labs(
     title = "distribución de precios por cantidad de personas permitidas",
@@ -76,7 +77,7 @@ df |>
 df |>
   ggplot()+
   # CONVERTIMOS A VARIABLE CATEGORICA "CIUDAD" 
-  aes(x = factor(ciudad), y = precio_x_noche, alpha = 0.1, colour = factor(ciudad))+
+  aes(x = factor(ciudad), y = precio, alpha = 0.1, colour = factor(ciudad))+
   # geom_violin()+
   geom_boxplot()+
   labs(
@@ -91,7 +92,7 @@ df |>
 # GRAFICAMOS LOS PRECIOS CON RESPECTO A LA DISTANCIA DEL CENTRO DE LA CIUDAD
 df |>
   ggplot()+
-  aes(x = dist, y= precio_x_noche, colour = ciudad )+
+  aes(x = dist, y= precio, colour = ciudad )+
   geom_point()+
   facet_wrap(~ciudad, scales = "free") +
   labs(title = "relacion de los precios con respecto a la distancia al centro de la ciudad.",
@@ -100,7 +101,7 @@ df |>
 # GRAFICAMOS LOS PRECIOS CON RESPECTO A LA DISTANCIA DE LA ESTACION DE METRO MAS CERCANA
 df |>
   ggplot()+
-  aes(x = metro_dist, y= precio_x_noche, colour = ciudad )+
+  aes(x = metro_dist, y= precio, colour = ciudad )+
   geom_point()+
   facet_wrap(~ciudad, scales = "free") +
   labs(title = "relacion de los precios con respecto a la distancia a la parada del metro mas cercano.",
@@ -111,8 +112,8 @@ df |>
 df |> 
   # filter(ciudad == "paris") |>
   ggplot()+
-  aes(x = dist, y= metro_dist, colour =  df$precio_x_noche)+
-  geom_point( size = df$precio_x_noche * 0.005) + 
+  aes(x = dist, y= metro_dist, colour =  df$precio)+
+  geom_point( size = df$precio * 0.005) + 
   facet_wrap(~ciudad, scales = "free") +
   labs(title = "relacion distancia ciudad-metro",
        x = "distancia al centro de la ciudad (km)", y = "distancia metro (km)")
@@ -128,7 +129,7 @@ summary(mod0)
 # modelamos la relacion
 # precio_por_noche = intersepto + pendiente * distancia + ciudad
 
-mod1 <-  lm( data = df, formula =  precio_x_noche~ dist )
+mod1 <-  lm( data = df, formula =  precio~ dist )
 
 summary(mod1)
 
