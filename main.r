@@ -35,7 +35,8 @@ df <- df %>%
 df <- df |>
   select(-room_private,
          -biz,
-         -room_type,
+         # -room_type,
+         -room_shared,
          -host_is_superhost,
          -multi,
          -attr_index,
@@ -45,7 +46,6 @@ df <- df |>
 # renombramos las variables
 df <- df %>%
   rename(precio_dos_noches = realSum,
-         cuarto_compartido = room_shared,
          capacidad_personas = person_capacity,
          puntuacion_limpieza = cleanliness_rating ,
          puntuacion = guest_satisfaction_overall,
